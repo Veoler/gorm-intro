@@ -5,6 +5,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"fmt"
+	"log"
 )
 
 func main() {
@@ -12,9 +13,11 @@ func main() {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		db.AutoMigrate(&gormintro.Student{}, &gormintro.Group{})
+		log.Fatalf("Не удалось подключиться к базе данных: %v", err)
+	} 
+	
+	if err := db.AutoMigrate(&gormintro.Student{}, &gormintro.Group{}); err != nil {
+		log.Fatalf("Ошибка миграции: %v", err)
 	}
 
 	errCreGr := gormintro.CreateGroup(db, "Группа 5")
